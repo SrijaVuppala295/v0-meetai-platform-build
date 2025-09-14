@@ -116,15 +116,15 @@ export async function getUserAnalytics(userId: string) {
     sql`
       SELECT AVG(ir.overall_score) as avg_score 
       FROM interview_reports ir 
-      JOIN interview_sessions is ON ir.session_id = is.id 
-      WHERE is.user_id = ${userId}
+      JOIN interview_sessions sess ON ir.session_id = sess.id 
+      WHERE sess.user_id = ${userId}
     `,
     sql`
-      SELECT is.*, ir.overall_score 
-      FROM interview_sessions is 
-      LEFT JOIN interview_reports ir ON is.id = ir.session_id 
-      WHERE is.user_id = ${userId} 
-      ORDER BY is.created_at DESC 
+      SELECT sess.*, ir.overall_score 
+      FROM interview_sessions sess 
+      LEFT JOIN interview_reports ir ON sess.id = ir.session_id 
+      WHERE sess.user_id = ${userId} 
+      ORDER BY sess.created_at DESC 
       LIMIT 5
     `,
   ])
