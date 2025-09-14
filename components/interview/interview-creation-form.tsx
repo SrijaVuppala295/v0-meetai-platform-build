@@ -93,8 +93,7 @@ export function InterviewCreationForm({ userId }: InterviewCreationFormProps) {
         description: "Your interview session has been set up successfully.",
       })
 
-      // Redirect to interview session
-      router.push(`/interview/session/${interview.id}`)
+      router.push(`/interview/${interview.id}`)
     } catch (error) {
       console.error("Error creating interview:", error)
       toast({
