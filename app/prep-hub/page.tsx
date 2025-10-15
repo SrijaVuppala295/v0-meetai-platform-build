@@ -135,6 +135,43 @@ export default function PrepHubPage() {
                     setUploadError(error.message || "Upload failed")
                   }}
                 />
+
+                {/* New: Fallback: direct file upload hitting /api/prep-hub/extract (multipart) */}
+                <div className="mt-3">
+                  <label className="text-xs text-muted-foreground block mb-1">
+                    Or upload directly (TXT, PDF, DOCX)
+                  </label>
+                  <input
+                    type="file"
+                    accept=".txt,.pdf,.doc,.docx"
+                    onChange={async (e) => {
+                      const file = e.target.files?.[0]
+                      if (!file) return
+                      setUploading(true)
+                      setUploadError(null)
+                      try {
+                        const form = new FormData()
+                        form.append("file", file)
+                        const r = await fetch("/api/prep-hub/extract", { method: "POST", body: form })
+                        if (!r.ok) {
+                          const j = await r.json().catch(() => ({}))
+                          throw new Error(j?.error || "Failed to extract text")
+                        }
+                        const data = await r.json()
+                        if (data?.text) setResume(data.text)
+                        else setUploadError("Could not extract text. Try pasting your resume content.")
+                      } catch (err) {
+                        setUploadError((err as Error).message || "Upload failed. Please paste your resume text.")
+                      } finally {
+                        setUploading(false)
+                        // reset input so same file can be reselected
+                        e.currentTarget.value = ""
+                      }
+                    }}
+                    className="block text-sm"
+                  />
+                </div>
+
                 {uploading && <p className="text-xs text-muted-foreground mt-2">Uploading and extracting text...</p>}
                 {uploadError && <p className="text-xs text-red-600 mt-2">{uploadError}</p>}
               </div>
