@@ -52,7 +52,7 @@ export default function PrepHubPage() {
 
       setQuestions(data.questions)
     } catch (e) {
-      console.error("Error generating questions:", e)
+      console.error("[v0] PrepHub generate error:", e)
       setError((e as Error).message || "Something went wrong. Please try again.")
     } finally {
       setLoading(false)
@@ -65,6 +65,7 @@ export default function PrepHubPage() {
       setUploading(true)
       const file = res?.[0]
       if (!file?.url) return
+      console.log("[v0] upload complete:", file) // debug
 
       // Ask server to extract text
       const r = await fetch("/api/prep-hub/extract", {
@@ -107,7 +108,7 @@ export default function PrepHubPage() {
                 <FileText className="h-5 w-5" />
                 Upload Resume
               </CardTitle>
-              <CardDescription>Paste your resume content or upload a file</CardDescription>
+              <CardDescription>Paste your resume content or upload a file (PDF, DOCX, or TXT)</CardDescription>
             </CardHeader>
             <CardContent>
               <Textarea
@@ -162,7 +163,7 @@ export default function PrepHubPage() {
         <div className="text-center mb-8">
           <Button
             onClick={generateQuestions}
-            disabled={!resume || !jobDescription || loading}
+            disabled={!resume.trim() || !jobDescription.trim() || loading}
             size="lg"
             className="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700"
           >

@@ -11,43 +11,71 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "Both resume and jobDescription are required." }, { status: 400 })
     }
 
-    // Use a current model for reliability and speed
-    const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" })
+    // Prefer a current, available model. Fallback to 8B if needed.
+    let chosenModel = "gemini-1.5-flash"
+    let text = ""
+    try {
+      console.log("[v0] prep-hub: using model:", chosenModel)
+      const model = genAI.getGenerativeModel({ model: chosenModel })
+      const prompt = `
+      Based on this resume and job description, generate 8-10 likely interview questions with suggested answers.
 
-    const prompt = `
-    Based on this resume and job description, generate 8-10 likely interview questions with suggested answers.
+      RESUME:
+      ${resume}
 
-    RESUME:
-    ${resume}
+      JOB DESCRIPTION:
+      ${jobDescription}
 
-    JOB DESCRIPTION:
-    ${jobDescription}
+      Return ONLY a JSON array (no prose) with this shape:
+      [
+        {
+          "question": "The interview question",
+          "suggestedAnswer": "A comprehensive suggested answer",
+          "category": "Technical|Behavioral|Experience|Company-specific"
+        }
+      ]
+      `
+      const result = await model.generateContent(prompt)
+      const response = await result.response
+      text = response.text() || ""
+    } catch (err: any) {
+      // If a model 404 or not supported happens, try a reliable fallback.
+      const message = String(err?.message || "")
+      console.log("[v0] prep-hub: first model failed:", message)
+      chosenModel = "gemini-1.5-flash-8b"
+      console.log("[v0] prep-hub: retrying with model:", chosenModel)
+      const model = genAI.getGenerativeModel({ model: chosenModel })
+      const result = await model.generateContent(`
+      Based on this resume and job description, generate 8-10 likely interview questions with suggested answers.
 
-    Return ONLY a JSON array (no prose) with this shape:
-    [
-      {
-        "question": "The interview question",
-        "suggestedAnswer": "A comprehensive suggested answer",
-        "category": "Technical|Behavioral|Experience|Company-specific"
-      }
-    ]
-    `
+      RESUME:
+      ${resume}
 
-    const result = await model.generateContent(prompt)
-    const response = await result.response
-    const text = response.text() || ""
+      JOB DESCRIPTION:
+      ${jobDescription}
 
-    // Extract JSON array. Handles plain arrays and fenced code blocks.
+      Return ONLY a JSON array (no prose) with this shape:
+      [
+        {
+          "question": "The interview question",
+          "suggestedAnswer": "A comprehensive suggested answer",
+          "category": "Technical|Behavioral|Experience|Company-specific"
+        }
+      ]
+      `)
+      const response = await result.response
+      text = response.text() || ""
+    }
+
+    // Try to extract just the JSON array from the LLM output
     let questions: unknown = []
     const codeFence = text.match(/```(?:json)?\s*([\s\S]*?)```/i)
     const arrayMatch = text.match(/\[[\s\S]*\]/)
-
     const toParse = codeFence?.[1]?.trim() || arrayMatch?.[0]?.trim() || text.trim()
 
     try {
       questions = JSON.parse(toParse)
     } catch {
-      // Try to salvage common formatting issues
       const sanitized = toParse
         .replace(/(\r\n|\n|\r)/g, " ")
         .replace(/,\s*]/g, "]")
@@ -61,8 +89,8 @@ export async function POST(request: NextRequest) {
     }
 
     return NextResponse.json({ questions })
-  } catch (error) {
-    console.error("Error generating questions:", error)
-    return NextResponse.json({ error: "Failed to generate questions" }, { status: 500 })
+  } catch (error: any) {
+    console.error("[v0] Error generating questions:", error?.message || error)
+    return NextResponse.json({ error: "Failed to generate questions. Please try again." }, { status: 500 })
   }
 }
