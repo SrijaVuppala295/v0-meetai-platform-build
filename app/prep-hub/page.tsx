@@ -4,8 +4,10 @@ import { useState } from "react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Textarea } from "@/components/ui/textarea"
-import { Upload, FileText, Brain, Download } from "lucide-react"
+import { FileText, Brain, Download } from "lucide-react"
 import { useUser } from "@clerk/nextjs"
+import { UploadButton } from "uploadthing/react"
+import type { OurFileRouter } from "@/app/api/uploadthing/core"
 
 interface Question {
   question: string
@@ -19,6 +21,8 @@ export default function PrepHubPage() {
   const [jobDescription, setJobDescription] = useState("")
   const [questions, setQuestions] = useState<Question[]>([])
   const [loading, setLoading] = useState(false)
+  const [uploading, setUploading] = useState(false)
+  const [uploadError, setUploadError] = useState<string | null>(null)
 
   const generateQuestions = async () => {
     if (!resume || !jobDescription) return
@@ -37,6 +41,37 @@ export default function PrepHubPage() {
       console.error("Error generating questions:", error)
     } finally {
       setLoading(false)
+    }
+  }
+
+  const handleUploadComplete = async (res: Array<{ url: string; name: string; type: string }>) => {
+    try {
+      setUploadError(null)
+      setUploading(true)
+      const file = res?.[0]
+      if (!file?.url) return
+
+      // Ask server to extract text
+      const r = await fetch("/api/prep-hub/extract", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ fileUrl: file.url, fileType: file.type }),
+      })
+      if (!r.ok) {
+        const j = await r.json().catch(() => ({}))
+        throw new Error(j?.error || "Failed to extract text")
+      }
+      const data = await r.json()
+      if (data?.text) {
+        setResume(data.text)
+      } else {
+        setUploadError("Could not extract text. Try pasting your resume content.")
+      }
+    } catch (e) {
+      console.log("[v0] upload extract error:", (e as Error).message)
+      setUploadError("Upload succeeded but text extraction failed. Please paste your resume text.")
+    } finally {
+      setUploading(false)
     }
   }
 
@@ -66,10 +101,27 @@ export default function PrepHubPage() {
                 onChange={(e) => setResume(e.target.value)}
                 className="min-h-[200px]"
               />
-              <Button variant="outline" className="mt-4 w-full bg-transparent">
-                <Upload className="h-4 w-4 mr-2" />
-                Upload Resume File
-              </Button>
+              {/* New: UploadThing button */}
+              <div className="mt-4">
+                <UploadButton<OurFileRouter>
+                  endpoint="resumeUploader"
+                  appearance={{
+                    button: "ut-ready:bg-primary ut-uploading:bg-muted ut-button:text-primary-foreground",
+                    allowedContent: "text-xs text-muted-foreground",
+                  }}
+                  onUploadBegin={() => {
+                    setUploading(true)
+                    setUploadError(null)
+                  }}
+                  onClientUploadComplete={handleUploadComplete}
+                  onUploadError={(error) => {
+                    setUploading(false)
+                    setUploadError(error.message || "Upload failed")
+                  }}
+                />
+                {uploading && <p className="text-xs text-muted-foreground mt-2">Uploading and extracting text...</p>}
+                {uploadError && <p className="text-xs text-red-600 mt-2">{uploadError}</p>}
+              </div>
             </CardContent>
           </Card>
 

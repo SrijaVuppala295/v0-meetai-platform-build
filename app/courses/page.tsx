@@ -1,6 +1,4 @@
 "use client"
-```tsx file="app/courses/page.tsx"
-"use client"
 
 import { useState, useEffect } from "react"
 import { Button } from "@/components/ui/button"
@@ -10,7 +8,7 @@ import { Input } from "@/components/ui/input"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { ScrollArea } from "@/components/ui/scroll-area"
-import { Play, Clock, Users, Star, Search, Filter, BookOpen, Video, FileText, ExternalLink } from 'lucide-react'
+import { Play, Clock, Users, Star, Search, Filter, BookOpen, Video, FileText, ExternalLink } from "lucide-react"
 import { useUser } from "@clerk/nextjs"
 
 interface Course {
@@ -61,51 +59,51 @@ const courses: Course[] = [
         title: "Variables and Data Types",
         duration: "15:30",
         videoId: "W6NZfCO5SIk",
-        description: "Understanding JavaScript variables, let, const, and data types"
+        description: "Understanding JavaScript variables, let, const, and data types",
       },
       {
-        id: "2", 
+        id: "2",
         title: "Functions and Scope",
         duration: "22:45",
         videoId: "N8ap4k_1QEQ",
-        description: "Function declarations, expressions, arrow functions, and scope"
+        description: "Function declarations, expressions, arrow functions, and scope",
       },
       {
         id: "3",
         title: "Arrays and Objects",
         duration: "18:20",
         videoId: "R8rmfD9Y5-c",
-        description: "Working with arrays, objects, and their methods"
+        description: "Working with arrays, objects, and their methods",
       },
       {
         id: "4",
         title: "Promises and Async/Await",
         duration: "25:10",
         videoId: "PoRJizFvM7s",
-        description: "Asynchronous JavaScript, promises, and modern async/await syntax"
+        description: "Asynchronous JavaScript, promises, and modern async/await syntax",
       },
       {
         id: "5",
         title: "DOM Manipulation",
         duration: "20:15",
         videoId: "0ik6X4DJKCc",
-        description: "Selecting and manipulating DOM elements with JavaScript"
-      }
+        description: "Selecting and manipulating DOM elements with JavaScript",
+      },
     ],
     resources: [
       {
         id: "1",
         title: "JavaScript Cheat Sheet",
         type: "PDF",
-        url: "#"
+        url: "#",
       },
       {
         id: "2",
         title: "Practice Exercises",
         type: "Link",
-        url: "#"
-      }
-    ]
+        url: "#",
+      },
+    ],
   },
   {
     id: "react-interview-prep",
@@ -124,51 +122,51 @@ const courses: Course[] = [
         title: "React Fundamentals",
         duration: "28:45",
         videoId: "Ke90Tje7VS0",
-        description: "Components, JSX, and React basics"
+        description: "Components, JSX, and React basics",
       },
       {
         id: "2",
         title: "State and Props",
         duration: "32:20",
         videoId: "O6P86uwfdR0",
-        description: "Managing state and passing props between components"
+        description: "Managing state and passing props between components",
       },
       {
         id: "3",
         title: "Hooks Deep Dive",
         duration: "45:30",
         videoId: "TNhaISOUy6Q",
-        description: "useState, useEffect, and custom hooks"
+        description: "useState, useEffect, and custom hooks",
       },
       {
         id: "4",
         title: "Context API and State Management",
         duration: "35:15",
         videoId: "35lXWvCuM8o",
-        description: "React Context API and global state management"
+        description: "React Context API and global state management",
       },
       {
         id: "5",
         title: "Performance Optimization",
         duration: "40:25",
         videoId: "8pDqJVdNa44",
-        description: "React.memo, useMemo, useCallback, and optimization techniques"
-      }
+        description: "React.memo, useMemo, useCallback, and optimization techniques",
+      },
     ],
     resources: [
       {
         id: "1",
         title: "React Interview Questions",
         type: "PDF",
-        url: "#"
+        url: "#",
       },
       {
         id: "2",
         title: "React Documentation",
         type: "Link",
-        url: "https://react.dev"
-      }
-    ]
+        url: "https://react.dev",
+      },
+    ],
   },
   {
     id: "system-design-basics",
@@ -187,51 +185,51 @@ const courses: Course[] = [
         title: "Scalability Fundamentals",
         duration: "35:20",
         videoId: "xpDnVSmNFX0",
-        description: "Understanding scalability, load balancing, and horizontal vs vertical scaling"
+        description: "Understanding scalability, load balancing, and horizontal vs vertical scaling",
       },
       {
         id: "2",
         title: "Database Design",
         duration: "42:15",
         videoId: "ztHopE5Wnpc",
-        description: "SQL vs NoSQL, database sharding, and replication"
+        description: "SQL vs NoSQL, database sharding, and replication",
       },
       {
         id: "3",
         title: "Caching Strategies",
         duration: "28:30",
         videoId: "U3RkDLtS7uY",
-        description: "Cache patterns, Redis, and CDN implementation"
+        description: "Cache patterns, Redis, and CDN implementation",
       },
       {
         id: "4",
         title: "Microservices Architecture",
         duration: "38:45",
         videoId: "rv4LlmLmVWk",
-        description: "Microservices vs monolith, service communication, and API design"
+        description: "Microservices vs monolith, service communication, and API design",
       },
       {
         id: "5",
         title: "Message Queues and Event Streaming",
         duration: "33:10",
         videoId: "oUJbuFMyBDk",
-        description: "Kafka, RabbitMQ, and asynchronous processing"
-      }
+        description: "Kafka, RabbitMQ, and asynchronous processing",
+      },
     ],
     resources: [
       {
         id: "1",
         title: "System Design Template",
         type: "PDF",
-        url: "#"
+        url: "#",
       },
       {
         id: "2",
         title: "High Scalability Blog",
         type: "Link",
-        url: "http://highscalability.com"
-      }
-    ]
+        url: "http://highscalability.com",
+      },
+    ],
   },
   {
     id: "data-structures-algorithms",
@@ -250,51 +248,51 @@ const courses: Course[] = [
         title: "Big O Notation",
         duration: "25:15",
         videoId: "Mo4vesaut8g",
-        description: "Understanding time and space complexity analysis"
+        description: "Understanding time and space complexity analysis",
       },
       {
         id: "2",
         title: "Arrays and Strings",
         duration: "35:20",
         videoId: "QJzQBCs1zps",
-        description: "Array manipulation, string algorithms, and common patterns"
+        description: "Array manipulation, string algorithms, and common patterns",
       },
       {
         id: "3",
         title: "Linked Lists",
         duration: "30:45",
         videoId: "njTh_OwMljA",
-        description: "Singly, doubly linked lists, and common operations"
+        description: "Singly, doubly linked lists, and common operations",
       },
       {
         id: "4",
         title: "Trees and Binary Search Trees",
         duration: "45:30",
         videoId: "oSWTXtMglKE",
-        description: "Tree traversals, BST operations, and tree algorithms"
+        description: "Tree traversals, BST operations, and tree algorithms",
       },
       {
         id: "5",
         title: "Dynamic Programming",
         duration: "55:20",
         videoId: "oBt53YbR9Kk",
-        description: "DP concepts, memoization, and classic DP problems"
-      }
+        description: "DP concepts, memoization, and classic DP problems",
+      },
     ],
     resources: [
       {
         id: "1",
         title: "DSA Cheat Sheet",
         type: "PDF",
-        url: "#"
+        url: "#",
       },
       {
         id: "2",
         title: "LeetCode Practice",
         type: "Link",
-        url: "https://leetcode.com"
-      }
-    ]
+        url: "https://leetcode.com",
+      },
+    ],
   },
   {
     id: "behavioral-interviews",
@@ -313,52 +311,52 @@ const courses: Course[] = [
         title: "STAR Method Framework",
         duration: "20:30",
         videoId: "Unzc731iCUY",
-        description: "Situation, Task, Action, Result framework for answering behavioral questions"
+        description: "Situation, Task, Action, Result framework for answering behavioral questions",
       },
       {
         id: "2",
         title: "Leadership and Teamwork",
         duration: "25:15",
         videoId: "MdSMZiuC8iA",
-        description: "Demonstrating leadership skills and teamwork abilities"
+        description: "Demonstrating leadership skills and teamwork abilities",
       },
       {
         id: "3",
         title: "Conflict Resolution",
         duration: "18:45",
         videoId: "Pm8kU37u0Ho",
-        description: "Handling workplace conflicts and difficult situations"
+        description: "Handling workplace conflicts and difficult situations",
       },
       {
         id: "4",
         title: "Problem Solving Stories",
         duration: "22:20",
         videoId: "PJKYqLP6MRE",
-        description: "Crafting compelling problem-solving narratives"
+        description: "Crafting compelling problem-solving narratives",
       },
       {
         id: "5",
         title: "Questions to Ask Interviewers",
         duration: "15:40",
         videoId: "Y95eI-ek_E8",
-        description: "Smart questions to ask at the end of interviews"
-      }
+        description: "Smart questions to ask at the end of interviews",
+      },
     ],
     resources: [
       {
         id: "1",
         title: "Behavioral Questions List",
         type: "PDF",
-        url: "#"
+        url: "#",
       },
       {
         id: "2",
         title: "STAR Method Template",
         type: "PDF",
-        url: "#"
-      }
-    ]
-  }
+        url: "#",
+      },
+    ],
+  },
 ]
 
 export default function CoursesPage() {
@@ -374,19 +372,20 @@ export default function CoursesPage() {
     let filtered = courses
 
     if (searchTerm) {
-      filtered = filtered.filter(course =>
-        course.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        course.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        course.instructor.toLowerCase().includes(searchTerm.toLowerCase())
+      filtered = filtered.filter(
+        (course) =>
+          course.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+          course.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
+          course.instructor.toLowerCase().includes(searchTerm.toLowerCase()),
       )
     }
 
     if (categoryFilter !== "all") {
-      filtered = filtered.filter(course => course.category === categoryFilter)
+      filtered = filtered.filter((course) => course.category === categoryFilter)
     }
 
     if (levelFilter !== "all") {
-      filtered = filtered.filter(course => course.level === levelFilter)
+      filtered = filtered.filter((course) => course.level === levelFilter)
     }
 
     setFilteredCourses(filtered)
@@ -417,7 +416,7 @@ export default function CoursesPage() {
                       <iframe
                         width="100%"
                         height="100%"
-                        src={\`https://www.youtube.com/embed/${currentVideo.videoId}\`}\
+                        src={`https://www.youtube.com/embed/${currentVideo.videoId}`}
                         title={currentVideo.title}
                         frameBorder="0"
                         allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
@@ -476,11 +475,11 @@ export default function CoursesPage() {
                           {selectedCourse.videos.map((video, index) => (
                             <div
                               key={video.id}
-                              className={\`p-3 rounded-lg cursor-pointer transition-colors ${
+                              className={`${"p-3 rounded-lg cursor-pointer transition-colors"} ${
                                 currentVideo?.id === video.id
                                   ? "bg-primary/10 border border-primary"
                                   : "bg-muted hover:bg-muted/80"
-                              }\`}\
+                              }`}
                               onClick={() => setCurrentVideo(video)}
                             >
                               <div className="flex items-start gap-3">
@@ -640,10 +639,7 @@ export default function CoursesPage() {
                     <span className="text-sm font-medium">{course.rating}</span>
                   </div>
                 </div>
-                <Button 
-                  onClick={() => setSelectedCourse(course)} 
-                  className="w-full"
-                >
+                <Button onClick={() => setSelectedCourse(course)} className="w-full">
                   <BookOpen className="h-4 w-4 mr-2" />
                   Start Course
                 </Button>
@@ -656,9 +652,7 @@ export default function CoursesPage() {
           <div className="text-center py-12">
             <BookOpen className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
             <h3 className="text-lg font-medium mb-2">No courses found</h3>
-            <p className="text-muted-foreground">
-              Try adjusting your search or filter criteria.
-            </p>
+            <p className="text-muted-foreground">Try adjusting your search or filter criteria.</p>
           </div>
         )}
       </div>
