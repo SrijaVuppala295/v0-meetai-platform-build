@@ -23,9 +23,14 @@ export default function PrepHubPage() {
   const [loading, setLoading] = useState(false)
   const [uploading, setUploading] = useState(false)
   const [uploadError, setUploadError] = useState<string | null>(null)
+  const [error, setError] = useState<string | null>(null)
 
   const generateQuestions = async () => {
-    if (!resume || !jobDescription) return
+    setError(null)
+    if (!resume.trim() || !jobDescription.trim()) {
+      setError("Please paste your resume and job description before generating.")
+      return
+    }
 
     setLoading(true)
     try {
@@ -35,10 +40,20 @@ export default function PrepHubPage() {
         body: JSON.stringify({ resume, jobDescription }),
       })
 
+      if (!response.ok) {
+        const err = await response.json().catch(() => ({}))
+        throw new Error(err?.error || "Failed to generate questions")
+      }
+
       const data = await response.json()
+      if (!data?.questions || !Array.isArray(data.questions)) {
+        throw new Error("Unexpected response format from generator.")
+      }
+
       setQuestions(data.questions)
-    } catch (error) {
-      console.error("Error generating questions:", error)
+    } catch (e) {
+      console.error("Error generating questions:", e)
+      setError((e as Error).message || "Something went wrong. Please try again.")
     } finally {
       setLoading(false)
     }
@@ -153,6 +168,7 @@ export default function PrepHubPage() {
           >
             {loading ? "Generating Questions..." : "Generate Interview Questions"}
           </Button>
+          {error && <p className="mt-2 text-sm text-red-600">{error}</p>}
         </div>
 
         {questions.length > 0 && (

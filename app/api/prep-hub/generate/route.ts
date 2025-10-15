@@ -7,7 +7,12 @@ export async function POST(request: NextRequest) {
   try {
     const { resume, jobDescription } = await request.json()
 
-    const model = genAI.getGenerativeModel({ model: "gemini-pro" })
+    if (!resume || !jobDescription || typeof resume !== "string" || typeof jobDescription !== "string") {
+      return NextResponse.json({ error: "Both resume and jobDescription are required." }, { status: 400 })
+    }
+
+    // Use a current model for reliability and speed
+    const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" })
 
     const prompt = `
     Based on this resume and job description, generate 8-10 likely interview questions with suggested answers.
@@ -18,27 +23,42 @@ export async function POST(request: NextRequest) {
     JOB DESCRIPTION:
     ${jobDescription}
 
-    Please return a JSON array of objects with this structure:
-    {
-      "question": "The interview question",
-      "suggestedAnswer": "A comprehensive suggested answer",
-      "category": "Technical/Behavioral/Experience/Company-specific"
-    }
-
-    Focus on:
-    1. Technical skills mentioned in both resume and JD
-    2. Behavioral questions based on experience
-    3. Company-specific questions
-    4. Role-specific scenarios
+    Return ONLY a JSON array (no prose) with this shape:
+    [
+      {
+        "question": "The interview question",
+        "suggestedAnswer": "A comprehensive suggested answer",
+        "category": "Technical|Behavioral|Experience|Company-specific"
+      }
+    ]
     `
 
     const result = await model.generateContent(prompt)
     const response = await result.response
-    const text = response.text()
+    const text = response.text() || ""
 
-    // Extract JSON from the response
-    const jsonMatch = text.match(/\[[\s\S]*\]/)
-    const questions = jsonMatch ? JSON.parse(jsonMatch[0]) : []
+    // Extract JSON array. Handles plain arrays and fenced code blocks.
+    let questions: unknown = []
+    const codeFence = text.match(/```(?:json)?\s*([\s\S]*?)```/i)
+    const arrayMatch = text.match(/\[[\s\S]*\]/)
+
+    const toParse = codeFence?.[1]?.trim() || arrayMatch?.[0]?.trim() || text.trim()
+
+    try {
+      questions = JSON.parse(toParse)
+    } catch {
+      // Try to salvage common formatting issues
+      const sanitized = toParse
+        .replace(/(\r\n|\n|\r)/g, " ")
+        .replace(/,\s*]/g, "]")
+        .replace(/,\s*}/g, "}")
+        .trim()
+      questions = JSON.parse(sanitized)
+    }
+
+    if (!Array.isArray(questions)) {
+      return NextResponse.json({ error: "Model did not return a valid questions array." }, { status: 422 })
+    }
 
     return NextResponse.json({ questions })
   } catch (error) {
